@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itq:schema xmlns:itq="http://www.w3.org/2001/XMLSchema" xmlns:soa="http://itq.edu/soa" targetNamespace="http://itq.edu/soa" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<itq:element name="Request">
+		<itq:complexType>
+			<itq:sequence>
+				<itq:element name="email" type="itq:string"/>
+				<itq:element name="password" type="itq:string"/>
+				<itq:element name="streamingService" type="itq:string"/>
+			</itq:sequence>
+		</itq:complexType>
+	</itq:element>
+	<itq:element name="Response">
+		<itq:complexType>
+			<itq:sequence>
+				<itq:element name="message" type="itq:string"/>
+			</itq:sequence>
+		</itq:complexType>
+	</itq:element>
+</itq:schema>

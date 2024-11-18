@@ -1,0 +1,74 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.5'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'edu.itq.soa'
+version = '1.0.0'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+configurations {
+	jaxws
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-artemis'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-web-services'
+	implementation 'com.google.code.gson:gson:2.11.0'
+	
+	jaxws 'com.sun.xml.ws:jaxws-tools:3.0.0'
+	jaxws 'jakarta.xml.ws:jakarta.xml.ws-api:3.0.0'
+	jaxws 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.0'
+	jaxws 'jakarta.activation:jakarta.activation-api:2.0.0'
+	jaxws 'com.sun.xml.ws:jaxws-rt:3.0.0'
+	
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+ext.jaxwsTargetDir = "generated/sources/jaxws"
+
+task wsimport {
+	description = 'Generate classes from wsdl using wsimport'
+
+	doLast {
+		project.mkdir(jaxwsTargetDir)
+		ant {
+			taskdef(name: 'wsimport',
+					classname: 'com.sun.tools.ws.ant.WsImport',
+					classpath: configurations.jaxws.asPath
+			)
+			wsimport(
+					keep: true,
+					destdir: jaxwsTargetDir,
+					extension: "true",
+					verbose: true,
+					wsdl: "${projectDir}/src/main/resources/DigitalServices.wsdl",
+					xnocompile: true,
+					package: "edu.itq.soa.dto") {
+				xjcarg(value: "-XautoNameResolution")
+			}
+		}
+	}
+}
+
+sourceSets {
+	main {
+			java.srcDirs += jaxwsTargetDir
+		}
+}
